@@ -1,0 +1,36 @@
+body
+{
+    background-color: #778ca3;
+}
+.menu
+{
+    background-color: #4b6584;
+}
+.texto
+{
+    color: white;
+    font-size: large;
+    margin: 1%;
+}
+.btn
+{
+    margin: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+.btn-outline-light:hover
+{
+    color: #4b6584;
+}
+footer{
+    background-color: #4b6584;
+    color: white;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+.title
+{
+    color: white;
+}
