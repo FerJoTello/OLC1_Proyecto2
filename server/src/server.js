@@ -36,14 +36,19 @@ app.post('/Analyze/', (req, res) => {
         //  input es el texto que se encuentra en el textarea con el id 'javaText'
         const { input } = req.body;
         //  file stream (i guess...)
-        var fs = require('fs'); 
+        var fs = require('fs');
         //  se instancia al analizador o gramatica
         var parser = require('../analyzer/grammar');
-        //  y se ejecuta el metodo parse() para analizar la entrada devolviendo el ast
-        let ast = parser.parse(input.toString());
-        //  se convierte el ast en un json y se exporta como 'ast.json'
-        fs.writeFileSync('./ast.json', JSON.stringify(ast, null, 2));
-        //  Si durante el analisis encuentra errores lexicos o sintacticos se recuperan...
+        try {
+            //  y se ejecuta el metodo parse() para analizar la entrada devolviendo el ast
+            let ast = parser.parse(input.toString());
+            //  se convierte el ast en un json y se exporta como 'ast.json'
+            fs.writeFileSync('./ast.json', JSON.stringify(ast, null, 2));
+        } catch (e) {
+            console.log("No se pudo recuperar del ultimo error");
+            console.error(e);
+        }
+        //  Si durante el análisis encuentra errores léxicos o sintácticos se recuperan...
         let errors = require('../analyzer/grammar').errors;
         //console.log(errors);
         //  ... y se envian como respuesta.
