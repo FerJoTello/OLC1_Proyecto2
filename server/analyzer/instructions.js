@@ -278,22 +278,28 @@ const APIINSTRUCTIONS = {
         }
     },
 
-    newContinue: function(){
+    newContinue: function(row, column){
         return{
-            Tipo: INSTRUCTIONS_TYPE.CONTINUE
+            Tipo: INSTRUCTIONS_TYPE.CONTINUE,
+            Fila: row,
+            Columna: column
         }
     },
 
-    newBreak: function(){
+    newBreak: function(row, column){
         return{
-            Tipo: INSTRUCTIONS_TYPE.BREAK
+            Tipo: INSTRUCTIONS_TYPE.BREAK,
+            Fila: row,
+            Columna: column
         }
     },
 
-    newReturn: function(expression){
+    newReturn: function(expression, row, column){
         return{
             Tipo: INSTRUCTIONS_TYPE.RETURN,
-            Valor_Retorno: expression
+            Valor_Retorno: expression,
+            Fila: row,
+            Columna: column
         }
     },
 
@@ -307,6 +313,7 @@ const APIINSTRUCTIONS = {
 }
 module.exports.INSTRUCTIONS_TYPE = INSTRUCTIONS_TYPE;
 module.exports.OPERATION_TYPE = OPERATION_TYPE;
+module.exports.OPTION_SWITCH = OPTION_SWITCH;
 module.exports.VALUE_TYPE = VALUE_TYPE;
 module.exports.APIINSTRUCTIONS = APIINSTRUCTIONS;
 //  

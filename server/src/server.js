@@ -39,9 +39,10 @@ app.post('/Analyze/', (req, res) => {
         var fs = require('fs');
         //  se instancia al analizador o gramatica
         var parser = require('../analyzer/grammar');
+        var ast;
         try {
             //  y se ejecuta el metodo parse() para analizar la entrada devolviendo el ast
-            let ast = parser.parse(input.toString());
+            ast = parser.parse(input.toString());
             //  se convierte el ast en un json y se exporta como 'ast.json'
             fs.writeFileSync('./ast.json', JSON.stringify(ast, null, 2));
         } catch (e) {
@@ -50,7 +51,12 @@ app.post('/Analyze/', (req, res) => {
         }
         //  Si durante el análisis encuentra errores léxicos o sintácticos se recuperan...
         let errors = require('../analyzer/grammar').errors;
-        //console.log(errors);
+        //  El ast no puede estar vacío
+        if (ast != undefined) {
+            let interpreter = require('../analyzer/interpreter');
+            interpreter.processAST(ast, errors, errors.length);
+            //console.log(errors);
+        }
         //  ... y se envian como respuesta.
         res.send(errors);
     } catch (e) {

@@ -28,9 +28,9 @@ parse: function parse (input) {
 */
 
 %{
-var panic = false;
-var count = 1;
-var errors = new Array();
+let panic = false,
+    count = 1,
+    errors = new Array();
 module.exports.errors = errors;
 %}
 
@@ -44,10 +44,9 @@ character ('.')
 stringliteral (\"[^"]*\")
 identifier ([a-zA-Z_])[a-zA-Z0-9_]*
 %%
-\s+             /*  skip whitespaces */
-
-[//].*										/* skip comment */
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]			/* skip comment */
+"//".*						        /* skip comment */
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] /* skip comment */
+\s+                         /* skip whitespaces */
 //  Palabras reservadas
 "int"           return  'R_INT';
 "double"        return  'R_DOUBLE';
@@ -112,7 +111,7 @@ identifier ([a-zA-Z_])[a-zA-Z0-9_]*
 
 <<EOF>>         return  'EOF';
 .               { 
-	let row = yylloc.first_line + 1;
+	let row = yylloc.first_line;
 	let column = yylloc.first_column + 1;
 	let newError = "<td><center>" + count.toString() + "</center></td>\n" +
                 "<td><center>Léxico</center></td>\n" +
@@ -235,10 +234,10 @@ INSTRUCTION:    DECLARATION                 { $$ = $1; }
             |   WHILE                       { $$ = $1; }
             |   DO                          { $$ = $1; }
             |   PRINT                       { $$ = $1; }
-            |   'R_CONTINUE' ';'            { $$ = API.newContinue(); }
-            |   'R_BREAK'    ';'            { $$ = API.newBreak(); }
-            |   'R_RETURN' ';'              { $$ = API.newReturn([]); }
-            |   'R_RETURN' EXPRESSION  ';'  { $$ = API.newReturn($2); }
+            |   'R_CONTINUE' ';'            { $$ = API.newContinue(this._$.first_line, this._$.first_column+1); }
+            |   'R_BREAK'    ';'            { $$ = API.newBreak(this._$.first_line, this._$.first_column+1); }
+            |   'R_RETURN' ';'              { $$ = API.newReturn(null, this._$.first_line, this._$.first_column+1);}
+            |   'R_RETURN' EXPRESSION  ';'  { $$ = API.newReturn($2, this._$.first_line, this._$.first_column+1); }
             |   FUNCTION_CALL ';'           { $$ = $1; }        
             ;
 IF: 'R_IF' '(' EXPRESSION ')' BLOCK_INSTRUCTIONS                                { $$ = API.newIf($3, $5, []); }
