@@ -59,6 +59,7 @@ app.post('/Analyze/', (req, res) => {
         }
         //  ... y se envian como respuesta.
         res.send(errors);
+        console.log("xd");
     } catch (e) {
         console.error(e);
     }
