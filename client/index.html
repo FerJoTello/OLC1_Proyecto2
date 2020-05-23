@@ -3,10 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Practica02</title>
+    <title>Proyecto 02</title>
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
@@ -16,12 +15,14 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="../css/styles.css" rel="stylesheet" type="text/css" media="all">
-    <script src="../js/index.js"></script>
     <!--!!!IMPORTANTE INCLUIR ESTOS!!!-->
     <script src="../js/jquery.min.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="js/json-viewer.js"></script>
+    <link rel="stylesheet" href="./css/json-viewer.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="../css/styles.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -32,9 +33,14 @@
                 <button class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">Archivo</button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item">Abrir</a>
+                    <!--No pude modificar el estilo del input. Por alguna razón siempre utiliza el diseño predeterminado del ordenador.-->
+                    <label class="dropdown-toggle custom-file-upload">
+                        <!--Input para abrir archivo.-->
+                        Abrir
+                        <input id="fileInput" type="file" size="20" onchange='processFiles(this.files)' accept=".java">
+                    </label>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Guardar</a>
+                    <a onclick="saveJava()" class="dropdown-item" href="#">Guardar</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">Nueva Pestaña</a>
                 </div>
@@ -44,63 +50,83 @@
                 <button class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">Reportes</button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Exportar python</a>
-                    <a class="dropdown-item" href="#">Exportar html</a>
-                    <a class="dropdown-item" href="#">Exportar json</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Errores</a>
+                    <a onclick="htmlReport()" class="dropdown-item" href="#">Errores</a>
                 </div>
             </li>
             <div class="texto"></div>
             <li class="nav-item">
-                <button onclick="Conn()" class="btn btn-outline-light" aria-haspopup="true" aria-expanded="false">Analizar</button>
+                <button onclick="Conn()" class="btn btn-outline-light" aria-haspopup="true"
+                    aria-expanded="false">Analizar</button>
             </li>
         </ul>
     </header>
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <h3 class="title">Entrada Java</h3>
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="t1" data-toggle="tab" href="#tab1" role="tab"
-                            aria-controls="tab1" aria-selected="true">tabName</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="t1">
-                        <textarea id="javaText" class="form-control" rows="18">java</textarea>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="title">Entrada Java</h3>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="t1" data-toggle="tab" href="#tab1" role="tab"
+                                    aria-controls="tab1" aria-selected="true">tabName</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="t1">
+                                <textarea id="javaText" class="form-control" rows="18"
+                                    placeholder="Tu código Java aquí"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="row">
                     <div class="col">
-                        <h3 class="title">Salida Python</h3>
-                        <textarea readonly class="form-control" rows="9">python</textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3 class="title">Salida HTML/JSON</h3>
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="html-tab" data-toggle="tab" href="#html" role="tab"
-                                    aria-controls="html" aria-selected="true">HTML</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="json-tab" data-toggle="tab" href="#json" role="tab"
-                                    aria-controls="json" aria-selected="false">JSON</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="html" role="tabpanel" aria-labelledby="html-tab">
-                                <textarea readonly class="form-control" rows="7">html</textarea>
-                            </div>
-                            <div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
-                                <textarea readonly class="form-control" rows="7">json</textarea>
-                            </div>
-                        </div>
+                        <div id="json"></div>
+                        <h3 class="title">AST</h3>
+                        <input type="file" class="load-json" onchange='processJson(this.files)' accept=".json">
+                        <button type="button" class="load-json">Cargar JSON</button>
+                        <button type="button" class="collapse">Comprimir</button>
+                        <textarea id="ast" readonly class="form-control" rows="18"></textarea>
+
+                        <script>
+                            var jsonObj = {};
+                            var jsonViewer = new JSONViewer();
+                            document.querySelector("#json").appendChild(jsonViewer.getContainer());
+                            // textarea value to JSON object
+                            let textarea = document.getElementById("ast");
+                            var setJSON = function (ast) {
+                                try {
+                                    //textarea.value = JSON.stringify(textarea.value);
+                                    jsonObj = JSON.parse(ast);
+                                }
+                                catch (err) {
+                                    alert(err);
+                                }
+                            };
+
+                            var loadJsonBtn = document.querySelector("button.load-json");
+                            var collapseBtn = document.querySelector("button.collapse");
+
+                            loadJsonBtn.addEventListener("click", function () {
+                                try {
+                                    setJSON(textarea.value);
+                                    jsonViewer.showJSON(jsonObj);
+                                } catch (e) {
+                                    alert("No se puede mostrar el arbol\n" + e);
+                                }
+                            });
+
+                            collapseBtn.addEventListener("click", function () {
+                                jsonViewer.showJSON(jsonObj, null, 1);
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
@@ -109,6 +135,7 @@
     <footer class="text-center py-2">
         © 2020 Copyright: <a href="https://github.com/FerJoTello/">Fernando Tello</a>
     </footer>
+    <div id="fileOutput" class="archi"></div>
 </body>
 
 </html>

@@ -15,6 +15,8 @@ app.set('port', process.env.PORT || 8080);
 //  middlewares
 const morgan = require("morgan");
 app.use(morgan('dev'));
+//  Utilizados para comunicarse con el cliente 
+//  por medio de json's y poder leerlos.
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -30,12 +32,35 @@ app.get('/', (req, res) => {
 });
 
 app.post('/Analyze/', (req, res) => {
-    const { input } = req.body;
-    //  input es el texto que se encuentra en el textarea con el id 'javaText'
-    console.log(input);
-    //  se instancia al analizador o gramatica
-    var parser = require('../analyzer/grammar');
-    //  y se ejecuta el metodo parse() para analizar la entrada
-    //parser.parse(input.toString());
-    res.send('success');
+    try {
+        //  input es el texto que se encuentra en el textarea con el id 'javaText'
+        const { input } = req.body;
+        //  file stream (i guess...)
+        var fs = require('fs');
+        //  se instancia al analizador o gramatica
+        var parser = require('../analyzer/grammar');
+        var ast;
+        try {
+            //  y se ejecuta el metodo parse() para analizar la entrada devolviendo el ast
+            ast = parser.parse(input.toString());
+            //  se convierte el ast en un json y se exporta como 'ast.json'
+            fs.writeFileSync('./ast.json', JSON.stringify(ast, null, 2));
+        } catch (e) {
+            console.log("No se pudo recuperar del ultimo error");
+            console.error(e);
+        }
+        //  Si durante el análisis encuentra errores léxicos o sintácticos se recuperan...
+        let errors = require('../analyzer/grammar').errors;
+        //  El ast no puede estar vacío
+        if (ast != undefined) {
+            let interpreter = require('../analyzer/interpreter');
+            interpreter.processAST(ast, errors, errors.length);
+            //console.log(errors);
+        }
+        //  ... y se envian como respuesta.
+        res.send(errors);
+        console.log("xd");
+    } catch (e) {
+        console.error(e);
+    }
 });
